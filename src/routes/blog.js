@@ -1,9 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const {body} = require('express-validator')
 
 const blogController = require("../controller/blog");
 
 // [POST]: v1/blog/post
-router.post("/post", blogController.createBlogPost);
+router.post("/post",[
+    body('title').isLength({min:5}).withMessage('Title Input Invalid'),
+    body('content').isLength({min:5}).withMessage('Content Input Invalid')
+
+], blogController.createBlogPost);
 
 module.exports = router;
