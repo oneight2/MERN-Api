@@ -1,12 +1,34 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
+const path = require('path')
 const mongoose = require('mongoose')
+const multer = require('multer')
 // IMPORT ROUTES
 const authRoutes = require("./src/routes/auth");
 const blogRoutes = require("./src/routes/blog");
 
+// konfigurasi lokasi simpen file dan namefile
+const fileStorage = multer.diskStorage({
+  destination:(req,file,cb)=>{
+    cb(null, 'images')
+  },
+  filename:(req,file,cb)=>{
+    cb(null, new Date().getTime()+'-'+file.originalname)
+  }
+})
+// konfigurasi filter type file
+const filterFile = (req, file, cb)=>{
+  if(file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg'){
+    cb(null, true)
+  }else{
+    cb(null, false)
+  }
+}
+
 app.use(bodyParser.json());
+app.use('/images', express.static(path.join(__dirname,'images')))
+app.use(multer({storage:fileStorage,fileFilter: filterFile}).single('image'))
 
 // SEETING CORS POLICY UNTUK  PENGAKSESAAN API DARI LUAR
 app.use((req, res, next) => {
