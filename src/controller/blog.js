@@ -46,16 +46,34 @@ exports.createBlogPost = (req, res, next) => {
 };
 
 exports.getAllPosts = (req, res, next) => {
+  // untuk pagination posisi halaman dan jumlah data yang ditampilkan perhalaman
+  const currentPage = parseInt(req.query.page || 1);
+  const perPage = parseInt(req.query.perPage || 5);
+  let totalData;
+
   BlogPost.find()
-    .then((result) => {
-      res.status(200).json({
-        message: "Data All Blog Post Berhasil Terambil",
-        data: result,
-      });
-    })
-    .catch((err) => {
-      next(err);
+  // hitung totaldata
+  .countDocuments()
+  .then(count =>{
+    totalData = count;
+    return BlogPost.find()
+    // skip untuk menskipdata
+    .skip((currentPage -1) * perPage)
+    .limit(perPage);
+
+  })
+  .then(result => {
+    res.status(200).json({
+      message: "Data All Blog Post Berhasil Terambil",
+      data: result,
+      totalData,
+      perPage,
+      currentPage
     });
+  })
+  .catch(err => {
+    next(err)
+  })
 };
 
 exports.getBlogPostById = (req, res, next) => {

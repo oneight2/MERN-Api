@@ -8,6 +8,13 @@ const multer = require('multer')
 const authRoutes = require("./src/routes/auth");
 const blogRoutes = require("./src/routes/blog");
 
+// SEETING CORS POLICY UNTUK  PENGAKSESAAN API DARI LUAR
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
 // konfigurasi lokasi simpen file dan namefile
 const fileStorage = multer.diskStorage({
   destination:(req,file,cb)=>{
@@ -30,13 +37,6 @@ app.use(bodyParser.json());
 app.use('/images', express.static(path.join(__dirname,'images')))
 app.use(multer({storage:fileStorage,fileFilter: filterFile}).single('image'))
 
-// SEETING CORS POLICY UNTUK  PENGAKSESAAN API DARI LUAR
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
 
 app.use("/v1/auth", authRoutes);
 app.use("/v1/blog", blogRoutes);
