@@ -4,6 +4,9 @@ const app = express();
 const path = require('path')
 const mongoose = require('mongoose')
 const multer = require('multer')
+
+const port = process.env.PORT || 4000;
+
 // IMPORT ROUTES
 const authRoutes = require("./src/routes/auth");
 const blogRoutes = require("./src/routes/blog");
@@ -54,7 +57,7 @@ app.use((error, req, res, next)=>{
 
 mongoose.connect('mongodb+srv://syarif:7september@cluster0.u1jzv.mongodb.net/Blog?retryWrites=true&w=majority')
 .then(()=>{
-  app.listen(4000, ()=>console.log('Connection Success'));
+  app.listen(port, ()=>console.log('Connection Success'));
 })
 .catch(err => console.log(err))
 
